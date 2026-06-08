@@ -1,0 +1,37 @@
+{
+  "title": "PQC Key Provenance Evidence for RATS",
+  "description": "RATS CBOR claims attesting PQC key generation provenance, hybrid pairing, rotation epoch. IETF Internet-Draft draft-vicente-rats-pqc-attestation-evidence. Author: Brian Vicente, Sanctum SecOps LLC. Patent-pending under USPTO Apps 64/080,137 and 19/698,870.",
+  "upload_type": "publication",
+  "publication_type": "workingpaper",
+  "creators": [
+    {
+      "name": "Vicente, Brian",
+      "orcid": "0009-0006-6395-5308",
+      "affiliation": "Sanctum SecOps LLC"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "keywords": [
+    "IETF",
+    "Internet-Draft",
+    "post-quantum cryptography",
+    "PQC",
+    "Sanctum SecOps",
+    "rats"
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "url",
+      "identifier": "https://datatracker.ietf.org/doc/draft-vicente-rats-pqc-attestation-evidence/",
+      "relation": "isSupplementTo"
+    },
+    {
+      "scheme": "url",
+      "identifier": "https://orcid.org/0009-0006-6395-5308",
+      "relation": "isIdenticalTo",
+      "resource_type": "publication-other"
+    }
+  ],
+  "communities": [],
+  "notes": "Patent-pending under U.S. Provisional Patent Application No. 64/080,137 (Mechanism I) and U.S. Patent Application No. 19/698,870 (Mechanism II). See README and IPR Considerations note in the draft for full scope."
+}
