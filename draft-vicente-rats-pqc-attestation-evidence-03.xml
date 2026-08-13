@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp "&#160;">
+]>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     category="info"
+     docName="draft-vicente-rats-pqc-attestation-evidence-03"
+     ipr="trust200902"
+     submissionType="independent"
+     xml:lang="en"
+     version="3">
+  <front>
+    <title abbrev="RATS PQC Evidence">PQC Key Provenance Evidence for RATS Attestation</title>
+    <seriesInfo name="Internet-Draft" value="draft-vicente-rats-pqc-attestation-evidence-03"/>
+    <author initials="B." surname="Vicente" fullname="Brian Vicente">
+      <organization>Sanctum SecOps LLC</organization>
+      <address>
+        <postal><city>Pine City</city><region>NY</region><country>United States of America</country></postal>
+        <email>brian@sanctumsecops.io</email>
+        <uri>https://orcid.org/0009-0006-6395-5308</uri>
+      </address>
+    </author>
+    <date year="2026" month="August" day="12"/>
+    <area>Security</area>
+    <workgroup>Remote ATtestation procedureS</workgroup>
+    <keyword>post-quantum cryptography</keyword>
+    <keyword>PQC</keyword>
+    <keyword>RATS</keyword>
+    <keyword>attestation</keyword>
+    <keyword>ML-DSA</keyword>
+    <keyword>Sanctum SecOps</keyword>
+    <abstract>
+      <t>This document defines PQC key provenance evidence claims for use within the RATS (Remote ATtestation procedureS) architecture (RFC 9334). It specifies Evidence claim formats that attest to the PQC algorithm capabilities, current epoch_id, and key provenance of an attesting environment, enabling Verifiers to enforce PQC readiness requirements as part of appraisal policy.</t>
+      <t>This revision (-03) adds conformance criteria for hybrid key attestation, aligns claim formats with FIPS 204/205, and introduces a SCITT receipt binding for attested epoch transitions.</t>
+    </abstract>
+    <note title="Source and Archival" removeInRFC="true">
+      <t>Source: <eref target="https://github.com/Sanc-Admin/rats-pqc-attestation-evidence"/>. ORCID: <eref target="https://orcid.org/0009-0006-6395-5308"/>. Discussion: rats@ietf.org.</t>
+    </note>
+    <note title="IPR Considerations" removeInRFC="true">
+      <t>U.S. Provisional Patent Application No. 64/080,137 (2026-06-01) and U.S. Patent Application No. 19/698,870 (2026-06-05). Sanctum SecOps PEN root: 1.3.6.1.4.1.65953.</t>
+    </note>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true"><name>Introduction</name>
+      <t>The RATS architecture <xref target="RFC9334"/> defines a framework for remotely attesting the trustworthiness of an Attesting Environment. As deployments migrate to PQC, Verifiers require assurance that Attesters are operating with PQC-capable signing keys at a known, current epoch. This document defines RATS Evidence claims that convey PQC key provenance, algorithm identity, and epoch currency to Verifiers.</t>
+    </section>
+    <section anchor="terminology" numbered="true"><name>Terminology</name>
+      <t>BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> applies. Terms from RFC 9334 apply.</t>
+      <dl newline="true" spacing="normal">
+        <dt>PQC Key Provenance Evidence:</dt><dd>RATS Evidence claims asserting the algorithm identity, epoch_id, and generation provenance of an Attesting Environment's active signing key.</dd>
+        <dt>epoch_id:</dt><dd>Monotonically increasing integer identifying the current PQC key epoch, consistent with draft-vicente-lamps-rotation-envelope.</dd>
+      </dl>
+    </section>
+    <section anchor="pqc-evidence-claims" numbered="true"><name>PQC Evidence Claim Definitions</name>
+      <t>The following claims are defined for inclusion in RATS Evidence (EAT or CBOR-encoded):</t>
+      <dl newline="true" spacing="normal">
+        <dt><tt>pqc-alg-id</tt>:</dt><dd>Text string. The algorithm identifier (OID or COSE algorithm label) of the active PQC signing key. MUST be present in PQC-capable Attesters.</dd>
+        <dt><tt>pqc-epoch-id</tt>:</dt><dd>Uint. The current epoch_id of the active PQC signing key. MUST be non-zero.</dd>
+        <dt><tt>pqc-key-provenance</tt>:</dt><dd>Text string (enumerated). One of: "hardware-tpm", "hardware-hsm", "software-fips", "software-other". Indicates the generation and storage environment of the active key.</dd>
+        <dt><tt>pqc-hybrid-component</tt>:</dt><dd>Boolean. TRUE if the active signing key is a hybrid composite (PQC + classical). FALSE if pure PQC.</dd>
+        <dt><tt>pqc-scitt-receipt</tt>:</dt><dd>Bytes. Optional. A SCITT transparency receipt binding the epoch_id to a published Rotation Envelope (draft-vicente-scitt-pqc-transparency-receipts).</dd>
+      </dl>
+      <t>Verifiers enforcing a PQC readiness appraisal policy MUST reject Evidence where <tt>pqc-alg-id</tt> indicates a classical-only algorithm. Verifiers SHOULD reject Evidence where <tt>pqc-epoch-id</tt> is lower than the minimum acceptable epoch for the deployment.</t>
+    </section>
+    <section anchor="security-considerations" numbered="true"><name>Security Considerations</name>
+      <t>PQC Evidence claims MUST be integrity-protected by the Attester's active ML-DSA signing key. A compromised classical signing key MUST NOT be used to sign PQC Evidence claims; doing so would defeat the purpose of PQC attestation. Verifiers MUST validate the signing algorithm of the Evidence envelope itself before trusting any contained PQC claims.</t>
+    </section>
+    <section anchor="iana-considerations" numbered="true"><name>IANA Considerations</name>
+      <t>IANA is requested to register the claim names defined in this document in the IANA RATS Entity Attestation Token (EAT) registry and the CBOR Web Token (CWT) Claims registry.</t>
+    </section>
+  </middle>
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119"><front><title>Key words for use in RFCs to Indicate Requirement Levels</title><author initials="S." surname="Bradner"/><date year="1997" month="March"/></front></reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174"><front><title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title><author initials="B." surname="Leiba"/><date year="2017" month="May"/></front></reference>
+        <reference anchor="RFC9334" target="https://www.rfc-editor.org/info/rfc9334"><front><title>Remote ATtestation procedureS (RATS) Architecture</title><author initials="H." surname="Birkholz"/><date year="2023" month="January"/></front></reference>
+        <reference anchor="FIPS204" target="https://doi.org/10.6028/NIST.FIPS.204"><front><title>Module-Lattice-Based Digital Signature Standard (ML-DSA)</title><author><organization>NIST</organization></author><date year="2024" month="August"/></front></reference>
+        <reference anchor="FIPS205" target="https://doi.org/10.6028/NIST.FIPS.205"><front><title>Stateless Hash-Based Digital Signature Standard (SLH-DSA)</title><author><organization>NIST</organization></author><date year="2024" month="August"/></front></reference>
+      </references>
+    </references>
+  </back>
+</rfc>
